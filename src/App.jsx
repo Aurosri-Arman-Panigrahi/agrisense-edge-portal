@@ -83,6 +83,8 @@ export default function App() {
 
   // Research Paper Sticky TOC active section
   const [activePaperSection, setActivePaperSection] = useState('sec1');
+  // Research Paper View Mode: 'pdf' (direct PDF display) or 'editorial' (web text reader)
+  const [paperViewMode, setPaperViewMode] = useState('pdf');
 
   // Carousel Auto-Advance Effect
   useEffect(() => {
@@ -1191,27 +1193,95 @@ Patent Pending | IPC Classification: A01G 25/16 (Agricultural Watering Control)
               </p>
             </div>
 
-            {/* PDF Download and Print Buttons */}
-            <div className="flex items-center space-x-3 mt-4 md:mt-0">
+            {/* Mode Switcher & Quick Actions */}
+            <div className="flex flex-wrap items-center gap-3 mt-4 md:mt-0">
+              <div className="flex items-center bg-zinc-900 p-1 rounded-xl border border-white/10">
+                <button
+                  onClick={() => setPaperViewMode('pdf')}
+                  className={`px-3.5 py-1.5 rounded-lg text-xs font-mono transition-all flex items-center space-x-1.5 ${
+                    paperViewMode === 'pdf'
+                      ? 'bg-emerald-500 text-black font-bold shadow-md shadow-emerald-500/20'
+                      : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  <FileText className="w-3.5 h-3.5" />
+                  <span>Direct IEEE PDF</span>
+                </button>
+                <button
+                  onClick={() => setPaperViewMode('editorial')}
+                  className={`px-3.5 py-1.5 rounded-lg text-xs font-mono transition-all flex items-center space-x-1.5 ${
+                    paperViewMode === 'editorial'
+                      ? 'bg-emerald-500 text-black font-bold shadow-md shadow-emerald-500/20'
+                      : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  <BookOpen className="w-3.5 h-3.5" />
+                  <span>Editorial Web Reader</span>
+                </button>
+              </div>
+
               <a
                 href="/AgriSense_Edge_Research_Paper.pdf"
                 download="AgriSense_Edge_Research_Paper.pdf"
-                className="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-xs transition-all flex items-center space-x-2 shadow-lg shadow-emerald-500/20"
+                className="px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-xs transition-all flex items-center space-x-1.5 shadow-lg shadow-emerald-500/20"
               >
-                <Download className="w-4 h-4" />
-                <span>Download Compiled PDF (5 Pages)</span>
+                <Download className="w-3.5 h-3.5" />
+                <span>Download PDF</span>
               </a>
-              <button
-                onClick={() => window.print()}
-                className="px-4 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-gray-200 font-mono text-xs border border-white/10 transition-colors flex items-center space-x-2"
+
+              <a
+                href="/AgriSense_Edge_Research_Paper.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-3.5 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-gray-200 font-mono text-xs border border-white/10 transition-colors flex items-center space-x-1.5"
               >
-                <Printer className="w-4 h-4 text-emerald-400" />
-                <span>Print PDF View</span>
-              </button>
+                <ExternalLink className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Fullscreen</span>
+              </a>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          {paperViewMode === 'pdf' ? (
+            <div className="space-y-4">
+              {/* PDF Header Status Banner */}
+              <div className="glass-panel rounded-2xl p-4 border border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs">
+                <div className="flex items-center space-x-3">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                  <span className="font-mono text-emerald-400 font-semibold">
+                    Live Document: AgriSense_Edge_Research_Paper.pdf (Recompiled with Table I at Top of Page 4)
+                  </span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <a
+                    href="/AgriSense_Edge_Research_Paper.pdf#page=4"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-mono transition-colors flex items-center space-x-1.5"
+                  >
+                    <span>Jump to Table I (Page 4)</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                  <button
+                    onClick={() => window.print()}
+                    className="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-gray-300 font-mono text-xs border border-white/10 transition-colors flex items-center space-x-1.5"
+                  >
+                    <Printer className="w-3 h-3 text-emerald-400" />
+                    <span>Print View</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Direct PDF Iframe Container */}
+              <div className="w-full h-[950px] rounded-2xl overflow-hidden border border-emerald-500/30 shadow-2xl bg-zinc-950 relative">
+                <iframe
+                  src="/AgriSense_Edge_Research_Paper.pdf#toolbar=1&navpanes=1&scrollbar=1&page=1"
+                  title="AgriSense-Edge IEEE Academic Research Paper"
+                  className="w-full h-full border-0"
+                />
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             {/* Sticky Table of Contents Sidebar */}
             <div className="hidden lg:block lg:col-span-3">
               <div className="sticky top-24 glass-panel rounded-2xl p-5 border border-white/10 text-xs space-y-2">
@@ -1413,9 +1483,9 @@ Patent Pending | IPC Classification: A01G 25/16 (Agricultural Watering Control)
                   </ol>
                 </div>
               </div>
-
             </div>
           </div>
+        )}
         </div>
       </section>
 
