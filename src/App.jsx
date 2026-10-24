@@ -86,6 +86,26 @@ export default function App() {
   // Research Paper View Mode: 'pdf' (direct PDF display) or 'editorial' (web text reader)
   const [paperViewMode, setPaperViewMode] = useState('pdf');
 
+  // Bonto Cloud SCADA Gateway Stagnant / Active State
+  const [gatewayActive, setGatewayActive] = useState(false);
+  const [gatewayWaking, setGatewayWaking] = useState(false);
+  const bontoUrl = "https://agrisense-scada.bonto.run";
+
+  const handleToggleGateway = () => {
+    if (!gatewayActive) {
+      setGatewayWaking(true);
+      try {
+        fetch(bontoUrl, { mode: 'no-cors' }).catch(() => {});
+      } catch (e) {}
+      setTimeout(() => {
+        setGatewayWaking(false);
+        setGatewayActive(true);
+      }, 1800);
+    } else {
+      setGatewayActive(false);
+    }
+  };
+
   // Carousel Auto-Advance Effect
   useEffect(() => {
     if (carouselPaused) return;
@@ -213,17 +233,65 @@ Patent Pending | IPC Classification: A01G 25/16 (Agricultural Watering Control)
             <a href="#farmbuddy" className="hover:text-emerald-400 transition-colors">FarmBuddy AI</a>
           </nav>
 
-          {/* Live Edge Gateway Connection Beacon */}
-          <div className="flex items-center space-x-3">
-            <div className="flex items-center space-x-2 px-3 py-1.5 rounded-full bg-emerald-950/60 border border-emerald-500/40 shadow-inner">
+          {/* Interactive Bonto Cloud SCADA Gateway Controller */}
+          <div className="flex items-center space-x-2.5">
+            <div className={`flex items-center space-x-2 px-3 py-1.5 rounded-full border shadow-inner transition-all ${
+              gatewayActive
+                ? 'bg-emerald-950/70 border-emerald-500/50 text-emerald-300'
+                : gatewayWaking
+                ? 'bg-amber-950/70 border-amber-500/50 text-amber-300 animate-pulse'
+                : 'bg-zinc-900/90 border-white/10 text-gray-400'
+            }`}>
               <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                {gatewayActive && (
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                )}
+                <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${
+                  gatewayActive ? 'bg-emerald-500' : gatewayWaking ? 'bg-amber-400' : 'bg-zinc-500'
+                }`}></span>
               </span>
-              <span className="text-xs font-mono text-emerald-300 font-semibold tracking-wide">
-                Node-RED Edge: <span className="text-white">Active (112ms)</span>
+              <span className="text-xs font-mono font-medium tracking-wide">
+                {gatewayActive ? (
+                  <>SCADA Cloud: <span className="text-emerald-300 font-semibold">Active</span></>
+                ) : gatewayWaking ? (
+                  <>SCADA Cloud: <span className="text-amber-300 font-semibold">Waking Up...</span></>
+                ) : (
+                  <>SCADA Cloud: <span className="text-gray-400">Stagnant (Standby)</span></>
+                )}
               </span>
             </div>
+
+            {/* Toggle / Start Button */}
+            {!gatewayActive ? (
+              <button
+                onClick={handleToggleGateway}
+                disabled={gatewayWaking}
+                className="px-3 py-1.5 rounded-full bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-xs font-mono transition-all flex items-center space-x-1.5 shadow-lg shadow-emerald-500/20 active:scale-95 disabled:opacity-50"
+                title="Wake up the cloud Node-RED container on Bonto"
+              >
+                <span>{gatewayWaking ? 'Waking...' : '⚡ Start Gateway'}</span>
+              </button>
+            ) : (
+              <div className="flex items-center space-x-1.5">
+                <a
+                  href={bontoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-2.5 py-1.5 rounded-full bg-zinc-800 hover:bg-zinc-700 text-emerald-400 border border-emerald-500/30 text-xs font-mono transition-colors flex items-center space-x-1"
+                  title="Open live Node-RED Canvas"
+                >
+                  <span>Open</span>
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+                <button
+                  onClick={handleToggleGateway}
+                  className="px-2 py-1.5 rounded-full bg-zinc-900 hover:bg-zinc-800 text-gray-400 hover:text-white border border-white/10 text-xs font-mono transition-colors"
+                  title="Put back into dormant/stagnant state"
+                >
+                  ⏸️
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </header>
