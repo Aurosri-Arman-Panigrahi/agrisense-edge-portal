@@ -2,6 +2,7 @@
 
 [![Live Web Portal](https://img.shields.io/badge/Live_Portal-GitHub_Pages-22c55e?style=for-the-badge&logo=github)](https://aurosri-arman-panigrahi.github.io/agrisense-edge-portal/)
 [![Core SCADA Pipeline](https://img.shields.io/badge/Core_SCADA-Node--RED-8f0000?style=for-the-badge&logo=nodered)](https://github.com/Aurosri-Arman-Panigrahi/agrisense-edge-core)
+[![Launch Node-RED Live](https://github.com/codespaces/badge.svg)](https://codespaces.new/Aurosri-Arman-Panigrahi/agrisense-edge-core)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 [![IEEE Paper](https://img.shields.io/badge/IEEE_Manuscript-5_Pages_PDF-dc2626?style=for-the-badge&logo=adobeacrobatreader)](https://aurosri-arman-panigrahi.github.io/agrisense-edge-portal/AgriSense_Edge_Research_Paper.pdf)
 
